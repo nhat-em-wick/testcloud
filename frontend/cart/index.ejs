@@ -1,0 +1,71 @@
+<main>
+  <!-- <div class="no-item section">
+      <img src="images/images.png">
+      <span>No products in the cart.</span><br>
+      <a href="/product" class="btn-cart">Continue Shopping</a>
+  </div> -->
+  <div class="cart_container bd-grid section">
+    <% if(!session.cart || session.cart.totalPrice == 0){ %>
+    <div class="no-item section">
+      <img src="/images/cart.png">
+      <span>No products in the cart.</span><br>
+      <a href="/products" class="btn-cart">Continue Shopping</a>
+    </div>
+    <% }else{ %>
+    <table>
+      <tr class="tb-cart">
+        <th>Product</th>
+        <th>Quantity</th>
+        <th>Subtotal</th>
+      </tr>
+      <% for(let product of Object.values(session.cart.items)){ %>
+      <tr class="tb-cart">
+        <td>
+          <div class="cart-info">
+            <img src="/<%= product.item.image%>">
+            <div>
+              <p><%= product.item.title %></p>
+              <small>Price: <%= product.item.price %></small><br>
+              <a href="/cart/remove/<%= product.item._id %>">Remove</a>
+            </div>
+          </div>
+        </td>
+        <td>
+          <form action="/decrease" method="post">
+            <input type="hidden" name="price" value="<%= product.item.price %>">
+            <input type="hidden" name="_id" value="<%= product.item._id %>">
+            <button type="submit" class="btn-in-de">-</button>
+          </form>
+          <span class="qty"><%= product.qty %></span>
+          <form action="/increase" method="post">
+            <input type="hidden" name="price" value="<%= product.item.price %>">
+            <input type="hidden" name="_id" value="<%= product.item._id %>">
+            <button type="submit" class="btn-in-de">+</button>
+          </form>
+        </td>
+        <td><%= product.item.price * product.qty %>$</td>
+      </tr>
+      <% } %>
+    </table>
+    <div class="total-price">
+      <table>
+        <tr class="tb-cart">
+          <td>Total</td>
+          <td><%= session.cart.totalPrice %>$</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="total-price">
+      <% if(session.cart){ %>
+      <% if(!session.user){ %>
+      <a href="/login" class="btn-checkout">Login to checkout</a>
+      <% }else{ %>
+      <a href="/checkout" class="btn-checkout">Check out</a>
+      <% } %>
+      <% } %>
+    </div>
+
+    <% } %>
+  </div>
+</main>

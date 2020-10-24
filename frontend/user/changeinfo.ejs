@@ -1,0 +1,19 @@
+<main class="main-form">
+	<div class="account-page">
+		<div class="form-container">
+			<div class="form-btn">
+				<span>Change</span>
+			</div>
+			<form action="/my/edit" method="POST">
+				<% if(messages.error){ %>
+				<small id="err"><%= messages.error %> </small>
+				<% } %>
+				<input type="text" name="name" placeholder="Name" value="<%= user.name %>">
+				<input type="password" name="password" placeholder="Password">
+				<input type="password" name="conf_password" placeholder="Confirm Password">
+				<button type="submit" class="btn-submit">Change Info</button>
+				<small><a href="/">Cancel</a></small>
+			</form>
+		</div>
+	</div>
+</main>

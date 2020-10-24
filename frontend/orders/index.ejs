@@ -1,0 +1,38 @@
+<div class="cart_container bd-grid section">
+	<% if(messages.error){ %>
+	<small><%= messages.error %></small>
+	<% }else{ %>
+	<% if(messages.success){ %>
+	<small><%= messages.success %></small>
+	<% } %>
+	<table>
+		<tr>
+			<th>OrderId</th>
+			<th>Product</th>
+			<th>Total Price</th>
+			<th>Action</th>
+		</tr>
+		<% orders.forEach(order => { %>
+		<tr>
+			<td>
+				<a href="/orders/status/<%= order._id%>"><%= order._id%></a>
+			</td>
+			<td>
+				<% for (let product of Object.values(order.items)) { %>
+				<p><%= product.item.title %></p>
+				<small>Price: <%= product.item.price %>, Qty: <%= product.qty %> </small>
+				<% } %>
+			</td>
+			<td><%= order.totalPrice%></td>
+			<% if(order.status === 'order_placed') {%>
+			<td>
+				<form class="cancel" action="/cancelorder/<%= order._id %>?_method=DELETE" method="POST">
+					<input type="submit" class="btn-action-delete" value="Cancel">
+				</form>
+			</td>
+			<% } %>
+		</tr>
+		<% }); %>
+	</table>
+</div>
+<% } %>

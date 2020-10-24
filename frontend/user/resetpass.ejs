@@ -1,0 +1,18 @@
+<main class="main-form">
+	<div class="account-page">
+		<div class="form-container small-form">
+			<form action="/resetpassword" id="small-form" method="POST">
+				<% if(messages.error){ %>
+				<small id="err"><%= messages.error %> </small>
+				<% } %>
+				<% if(messages.success){ %>
+				<small><%= messages.success %></small>
+				<small><a href="/login">Log in!</a></small>
+				<% }else{ %>
+				<input type="password" name="newpass" placeholder="Please enter new password">
+				<button type="submit" class="btn-submit">Reset Password</button>
+				<% } %>
+			</form>
+		</div>
+	</div>
+</main>

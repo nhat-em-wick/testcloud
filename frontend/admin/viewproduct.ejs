@@ -1,0 +1,13 @@
+<main class="main-form">
+  <div class="account-page">
+    <div class="form-container view-product">
+      <img src="<%= product.image %> ">
+      <small>Title: <%= product.title %></small><br>
+      <small>Price: <%= product.price %> $</small><br>
+      <small>Total Quantity: <%= product.totalQty %></small><br>
+      <br>
+      <a href="/admin/products/edit/<%= product._id %>">Edit</a>
+      <a href="/admin/products">Cancel</a>
+    </div>
+  </div>
+</main>

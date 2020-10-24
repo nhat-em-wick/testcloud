@@ -1,0 +1,30 @@
+<main class="l-main">
+	<section class="featured section" id="shop">
+		<h2 class="section-title">STATUS ORDER</h2>
+		<div class="container-order">
+			<div class="order-title">
+				<h5><%= order._id %> </h5>
+				<h4>Track delivery status</h4>
+				<input id="hiddenInput" type="hidden" value="<%= JSON.stringify(order) %>">
+			</div>
+			<ul>
+				<li class="status-line" data-status="order_placed"><i class='bx bx1 bxs-book-alt'></i><br>
+					<i class='bx bx2 bxs-circle'></i>
+					<p>Order placed</p>
+				</li>
+				<li class="status-line" data-status="confirmed"><i class='bx bx1 bx-check'></i><br>
+					<i class='bx bx2 bxs-circle'></i>
+					<p>Order confirmation</p>
+				</li>
+				<li class="status-line" data-status="delivered"><i class='bx bx1 bxs-car'></i><br>
+					<i class='bx bx2 bxs-circle'></i>
+					<p>Out for delivery</p>
+				</li>
+				<li class="status-line" data-status="completed"><i class='bx bx1 bxs-happy'></i><br>
+					<i class='bx bx2 bxs-circle'></i>
+					<p>Complete</p>
+				</li>
+			</ul>
+		</div>
+	</section>
+</main>

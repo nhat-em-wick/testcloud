@@ -1,0 +1,22 @@
+
+    <main class="main-form">
+        <div class="account-page">
+            <div class="form-container">
+                <div class="form-btn">
+                    <span>Product</span>
+                    <hr id="checkout">
+                </div>
+                <form action="/admin/products/add" method="post" enctype="multipart/form-data">
+					<% if(messages.error){ %>
+						<small id="err"><%= messages.error %> </small>
+						<% } %>
+                    <input type="text" name="title" placeholder="Title" value="<%= messages.title %>">
+                    <input type="text" name="price" placeholder="Price"value="<%= messages.price %>">
+                    <input type="text" name="totalQty" placeholder="Total Quantity"value="<%= messages.totalQty %>">
+                    <input type="file" class="input-file" id="mybook" name="mybook" accept="image/png, image/jpeg, image/jpg, image/gif">
+                    <button type="submit" class="btn-submit">Add Product</button>
+                </form>
+            </div>
+        </div>
+    </main>
+   

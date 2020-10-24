@@ -1,0 +1,17 @@
+<main class="main-form">
+	<div class="account-page">
+		<div class="form-container small-form">
+			<form action="/forgotpassword" id="small-form" method="POST">
+				<% if(messages.error){ %>
+				<small id="err"><%= messages.error %> </small>
+				<% } %>
+				<% if(messages.success){ %>
+				<small id="success"><%= messages.success %> </small>
+				<% } %>
+				<input type="email" name="email" placeholder="Please enter email to reset password"
+					value="<%= messages.email %>">
+				<button type="submit" class="btn-submit">Send Email</button>
+			</form>
+		</div>
+	</div>
+</main>

@@ -1,0 +1,188 @@
+<main class="section">
+	<% if(messages.error){ %>
+	<section class="featured section" id="shop">
+		<h2 class="section-title">SEARCH ORDER</h2>
+		<div class="featured_container bd-grid">
+			<div class="form-search">
+				<form action="/admin/orders/search" method="get">
+					<input type="text" name="q" class="search" value="<%= messages.q %>" placeholder="Customer">
+					<input type="submit" class="btn-search" value="Search">
+				</form>
+			</div>
+			<p><%= messages.error %></p>
+		</div>
+	</section>
+	<% }else if(messages.q){ %>
+	<div class="admin-wrapper">
+		<div class="item left-sidebar">
+			<ul>
+				<li><a href="/admin/users">Manage User</a></li>
+				<li><a href="/admin/products">Manage Product</a></li>
+				<li><a href="/admin/orders">Manage Order</a></li>
+			</ul>
+		</div>
+		<div class="item admin-content">
+			<div class="content">
+				<h2 class="section-title">SEARCH ORDER</h2>
+				<div class="form-search">
+					<form action="/admin/orders/search" method="get">
+						<input type="text" name="q" class="search" value="<%= messages.q %>" placeholder="Customer">
+						<input type="submit" class="btn-search" value="Search">
+					</form>
+				</div>
+				<table class="admin-table">
+					<thead>
+						<th>ID</th>
+						<th>Products</th>
+						<th>Customer</th>
+						<th>Phone</th>
+						<th>Address</th>
+						<th>Status</th>
+						<th>Action</th>
+					</thead>
+					<tbody>
+						<% records.forEach(order => { %>
+						<tr>
+							<td><%= order._id%></td>
+							<td>
+								<% for (let product of Object.values(order.items)) { %>
+								<small><%= product.item.title %> - <%= product.qty %></small><br>
+								<% } %>
+							</td>
+							<td><%= order.customerId.name %></td>
+							<td><%= order.phone%></td>
+							<td><%= order.address%></td>
+							<td>
+								<form action="/admin/orders/status" method="post">
+									<input type="hidden" name="orderId" value="<%= order._id %>">
+									<select name="status" onchange="this.form.submit()">
+										<option value="order_placed" <%= order.status == 'order_placed' ? 'selected' :''  %>>Order placed
+										</option>
+										<option value="confirmed" <%= order.status == 'confirmed' ? 'selected' :''  %>>Confirmed</option>
+										<option value="delivered" <%= order.status == 'delivered' ? 'selected' :''  %>>Out for delivery
+										</option>
+										<option value="completed" <%= order.status == 'completed' ? 'selected' :''  %>>Completed</option>
+
+									</select>
+								</form>
+							</td>
+							<td>
+								<form action="/" method="post">
+									<input type="submit" class="btn-action-delete" value="Delete">
+								</form>
+							</td>
+						</tr>
+						<% }); %>
+					</tbody>
+				</table>
+			</div>
+			<div class="book_pages bd-grid">
+				<div>
+					<% if(page>1){ %>
+					<span class="book_pag"><a href="?page=<%= page-1 %>"><i class='bx bxs-chevron-left'></i></a></span>
+					<% } %>
+					<% for(var i = 1; i <= totalPages; i++){ %>
+					<% if(i != page){ %>
+					<% if(i>page-3&&i<page+3){ %>
+					<span class="book_pag"><a href="?page=<%= i %>"><%= i %> </a></span>
+					<% } %>
+					<% }else{ %>
+					<span class="book_pag"><a href=""><%= i %></a></span>
+					<% } %>
+					<% } %>
+					<% if(page<totalPages-2){ %>
+					<span class="book_pag"><a href="?page=<%= page+1 %>"><i class='bx bxs-chevron-right'></i></a></span>
+					<% } %>
+				</div>
+			</div>
+		</div>
+		<% }else{ %>
+		<div class="admin-wrapper">
+			<div class="item left-sidebar">
+				<ul>
+					<li><a href="/admin/users">Manage User</a></li>
+					<li><a href="/admin/products">Manage Product</a></li>
+					<li><a href="/admin/orders">Manage Order</a></li>
+				</ul>
+			</div>
+			<div class="item admin-content">
+				<% if(messages.error){ %>
+				<small id="err"><%= messages.error %> </small>
+				<% }else{ %>
+				<div class="content">
+					<h2 class="section-title">MANAGE ORDER</h2>
+					<div class="form-search">
+						<form action="/admin/orders/search" method="get">
+							<input type="text" name="q" class="search" value="<%= messages.q %>" placeholder="Customer">
+							<input type="submit" class="btn-search" value="Search">
+						</form>
+					</div>
+					<table class="admin-table">
+						<thead>
+							<th>ID</th>
+							<th>Products</th>
+							<th>Customer</th>
+							<th>Phone</th>
+							<th>Address</th>
+							<th>Status</th>
+							<th>Action</th>
+						</thead>
+						<tbody>
+							<% records.forEach(order => { %>
+							<tr>
+								<td><%= order._id%></td>
+								<td>
+									<% for (let product of Object.values(order.items)) { %>
+									<small><%= product.item.title %> - <%= product.qty %></small><br>
+									<% } %>
+								</td>
+								<td><%= order.customerId.name %></td>
+								<td><%= order.phone%></td>
+								<td><%= order.address%></td>
+								<td>
+									<form action="/admin/orders/status" method="post">
+										<input type="hidden" name="orderId" value="<%= order._id %>">
+										<select name="status" onchange="this.form.submit()">
+											<option value="order_placed" <%= order.status == 'order_placed' ? 'selected' :''  %>>Order placed
+											</option>
+											<option value="confirmed" <%= order.status == 'confirmed' ? 'selected' :''  %>>Confirmed</option>
+											<option value="delivered" <%= order.status == 'delivered' ? 'selected' :''  %>>Out for delivery
+											</option>
+											<option value="completed" <%= order.status == 'completed' ? 'selected' :''  %>>Completed</option>
+
+										</select>
+									</form>
+								</td>
+								<td>
+									<form action="/" method="post">
+										<input type="submit" class="btn-action-delete" value="Delete">
+									</form>
+								</td>
+							</tr>
+							<% }); %>
+						</tbody>
+					</table>
+				</div>
+				<div class="book_pages bd-grid">
+					<div>
+						<% if(page>1){ %>
+						<span class="book_pag"><a href="?page=<%= page-1 %>"><i class='bx bxs-chevron-left'></i></a></span>
+						<% } %>
+						<% for(var i = 1; i <= totalPages; i++){ %>
+						<% if(i != page){ %>
+						<% if(i>page-3&&i<page+3){ %>
+						<span class="book_pag"><a href="?page=<%= i %>"><%= i %> </a></span>
+						<% } %>
+						<% }else{ %>
+						<span class="book_pag"><a href=""><%= i %></a></span>
+						<% } %>
+						<% } %>
+						<% if(page<totalPages-2){ %>
+						<span class="book_pag"><a href="?page=<%= page+1 %>"><i class='bx bxs-chevron-right'></i></a></span>
+						<% } %>
+					</div>
+				</div>
+				<% } %>
+			</div>
+			<% } %>
+</main>

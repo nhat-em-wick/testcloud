@@ -1,0 +1,17 @@
+<main>
+	<div class="account-page">
+		<div class="form-container">
+			<div class="form-btn">
+				<span>Order</span>
+			</div>
+			<form action="/orders" method="POST">
+				<% if(messages.error){ %>
+				<small id="err"><%= messages.error %> </small>
+				<% } %>
+				<input type="text" name="phone" placeholder="Phone" value="<%= messages.phone %>">
+				<input type="text" name="address" placeholder="Address" value="<%= messages.address %>">
+				<button type="submit" class="btn-submit">Order Now</button>
+			</form>
+		</div>
+	</div>
+</main>

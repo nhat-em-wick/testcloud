@@ -1,0 +1,20 @@
+<main class="main-form">
+	<div class="account-page">
+		<div class="form-container">
+			<div class="form-btn">
+				<span>Product</span>
+			</div>
+			<form action="/admin/products/edit/<%= product._id %>?_method=PUT" method="post" enctype="multipart/form-data">
+				<% if(messages.error){ %>
+				<small id="err"><%= messages.error %> </small>
+				<% } %>
+				<input type="text" name="title" placeholder="Title" value="<%= product.title %>">
+				<input type="text" name="price" placeholder="Price" value="<%= product.price %>">
+				<input type="text" name="totalQty" placeholder="Total Quantity" value="<%= product.totalQty %>">
+				<input type="file" class="input-file" id="mybook" name="mybook"
+					accept="image/png, image/jpeg, image/jpg, image/gif">
+				<button type="submit" class="btn-submit">Edit Product</button>
+			</form>
+		</div>
+	</div>
+</main>

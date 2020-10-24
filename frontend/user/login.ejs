@@ -1,0 +1,19 @@
+<main class="main-form">
+	<div class="account-page">
+		<div class="form-container">
+			<div class="form-btn">
+				<span>Login</span>
+			</div>
+			<form action="/login" id="LoginForm" method="POST">
+				<% if(messages.error){ %>
+				<small id="err"><%= messages.error %> </small>
+				<% } %>
+				<input type="email" name="email" placeholder="Email" value="<%= messages.email %> ">
+				<input type="password" name="password" placeholder="Password">
+				<button type="submit" class="btn-submit">Login</button>
+				<a href="/forgotpassword">Forgot Password</a><br>
+				<a href="/register">No account? Create one here </a>
+			</form>
+		</div>
+	</div>
+</main>

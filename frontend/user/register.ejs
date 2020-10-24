@@ -1,0 +1,21 @@
+<main class="main-form">
+  <div class="account-page">
+    <div class="form-container">
+      <div class="form-btn">
+        <span>Register</span>
+      </div>
+      <form action="/register" id="RegisterForm" method="POST">
+        <% if(messages.error){ %>
+        <small id="err"><%= messages.error %> </small>
+        <% } %>
+        <input type="text" name="name" placeholder="Name" value="<%= messages.name %>">
+        <input type="email" name="email" placeholder="Email" value="<%= messages.email %>">
+        <input type="password" name="password" placeholder="Password" value="<%= messages.password %>">
+        <input type="password" name="conf_password" placeholder="Confirm Password"
+          value="<%= messages.conf_password %>">
+        <button type="submit" class="btn-submit">Register</button>
+        <small> Already have an account?<br><a href="/login"> Log in instead!</a></small>
+      </form>
+    </div>
+  </div>
+</main>
