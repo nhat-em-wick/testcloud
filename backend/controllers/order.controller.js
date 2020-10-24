@@ -22,7 +22,7 @@ module.exports.adminSearch = async (req, res) => {
   }
 };
 
-module.exports.store = async (req, res) => {
+module.exports.order = async (req, res) => {
   const { phone, address } = req.body;
   try {
     const order = new orderModel({
@@ -38,13 +38,13 @@ module.exports.store = async (req, res) => {
     for (let product of Object.values(req.session.cart.items)) {
       const productTotalQty = await productModel.findById(product.item._id);
       productTotalQty.totalQty -= product.qty;
-      const updateProductStore = await productStore.save();
+      const updateProductTotalQty = await productTotalQty.save();
     }
     delete req.session.cart;
-    req.flash("success", "Order placed successfully");
+    req.flash('success', "Order placed successfully");
     res.redirect("/orders");
   } catch (err) {
-    res.flash("error", "server error");
+    res.flash('error', "server error");
     res.redirect("/orders");
   }
 };

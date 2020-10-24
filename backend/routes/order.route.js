@@ -6,7 +6,7 @@ const checkAdmin = require("../middleware/checkAdmin");
 const checkInput = require("../middleware/checkinput");
 
 router.get('/admin/orders/search', verifyToken, checkAdmin, orderController.adminSearch)
-router.post("/orders", verifyToken, checkInput.checkOrder, orderController.store);
+router.post("/orders", verifyToken, checkInput.checkOrder, orderController.order);
 router.get("/orders", verifyToken, orderController.showOrderUser);
 router.get('/orders/status/:id', verifyToken, orderController.statusOrder)
 router.delete('/cancelorder/:id', verifyToken, orderController.cancelOrder);
