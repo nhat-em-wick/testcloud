@@ -678,6 +678,9 @@ form .btn-in-de{
 .tb-cart th:last-child{
     text-align: right;
 }
+.tb-cart td{
+    font-size: 15px;
+}
 /* ADMIN */
 .admin-wrapper{
     display: flex;
