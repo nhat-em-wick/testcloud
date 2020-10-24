@@ -3,6 +3,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const multer = require("multer");
+const upload = multer({ dest: "public/uploads" });
 const path = require("path");
 const session = require("express-session");
 const MongoDbStore = require("connect-mongo")(session);
