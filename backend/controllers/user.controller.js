@@ -202,7 +202,7 @@ module.exports.forgotPassword = async (req, res) => {
       to: email,
       subject: "Account Reset Password",
       html: `<h2>Please click on given link to reset password</h2>
-              <p>localhost:3000/resetpassword/${token}</p>`,
+              <p>coder-nhat.herokuapp.com/resetpassword/${token}</p>`,
     };
     mg.messages().send(data, function (error, body) {
       console.log(body);
