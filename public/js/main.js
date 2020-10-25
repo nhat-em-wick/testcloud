@@ -47,8 +47,7 @@ function renderProduct(products){
   let html = '';
   for (var list = 0; list < 6; list++) {
     if(products[list]){
-      html += '<article class="book"><img src="' + products[list].image +'" class="book_img"><span class="book_name">'
-      +products[list].title+'</span></article>';
+      html += '<article class="book"><img src="' + products[list].image +'" class="book_img"></article>';
     }else{
       break;
     }
