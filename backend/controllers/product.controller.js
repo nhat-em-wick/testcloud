@@ -72,8 +72,8 @@ module.exports.admin_product = async (req, res) => {
     let totalProducts = await productModel.find();
     res.render("admin/admin_product", pagination(page, perPage, totalProducts));
   } catch (err) {
+    req.flash("error", err);
     console.log(err);
-    res.redirect('/admin/products')
   }
 };
 
@@ -83,12 +83,14 @@ module.exports.pageAddProduct = (req, res) => {
 
 // add product
 module.exports.addProduct = async (req, res) => {
+  const { title, totalQty, price } = req.body;
+  try {
     const uploader = async (path) => await cloudinary.uploads(path, 'images')
     const file = req.file;
     const {path} = file;
     const newpath = await uploader(path);
     fs.unlinkSync(path)
-    try {
+    
       const product = new productModel({
         title: title,
         totalQty: totalQty,
@@ -98,9 +100,9 @@ module.exports.addProduct = async (req, res) => {
       const saveProduct = await product.save();
       res.redirect(`/admin/viewproduct/${saveProduct._id}`);
     } catch (err) {
-      console.log(err);
-      res.redirect('/admin/products');
+      res.render("404");
     }
+  
 };
 
 module.exports.showProduct = async (req, res) => {
@@ -109,14 +111,14 @@ module.exports.showProduct = async (req, res) => {
     res.render("admin/viewproduct", { product: product });
   } catch (err) {
     console.log(err);
-    res.redirect("/admin/products");
+    res.redirect('/admin/products')
   }
 };
 
 module.exports.showEditProduct = async (req, res) => {
   try {
     const product = await productModel.findById(req.params.id);
-      res.render("admin/editproduct", { product: product });
+    res.render("admin/editproduct", { product: product });
   } catch (err) {
     console.log(err);
     res.redirect("/admin/products")
@@ -124,21 +126,27 @@ module.exports.showEditProduct = async (req, res) => {
 };
 
 module.exports.editProduct = async (req, res) => {
-    const uploader = async (path) => await cloudinary.uploads(path, 'images')
+  const { title, totalQty, price } = req.body;
+  try {
+  const uploader = async (path) => await cloudinary.uploads(path, 'images')
     const file = req.file;
     const {path} = file;
     const newpath = await uploader(path);
     fs.unlinkSync(path)
-    try {
+    
       const product = await productModel.findById(req.params.id);
+      if (product) {
         product.title = title || product.title;
         product.price = price || product.price;
         product.totalQty = totalQty || product.totalQty;
-        product.image = newpath.url || product.image;
+        product.image = req.body.mybook || product.image;
         const updateProduct = await product.save();
         res.redirect(`/admin/viewproduct/${updateProduct._id}`);
+      } else {
+        res.render("404");
+      }
     } catch (err) {
-      res.redirect('/admin/products');
+      res.render("404");
     }
 };
 
