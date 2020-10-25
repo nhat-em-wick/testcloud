@@ -8,7 +8,7 @@
                 </div>
                 <form action="/admin/products/add" method="post" enctype="multipart/form-data">
 					<% if(messages.error){ %>
-						<small id="err"><%= messages.error %> </small>
+						<small id="err"><%= messages.error %></small>
 						<% } %>
                     <input type="text" name="title" placeholder="Title" value="<%= messages.title %>">
                     <input type="text" name="price" placeholder="Price"value="<%= messages.price %>">

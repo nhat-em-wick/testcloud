@@ -64,7 +64,7 @@
 			<% records.forEach(product=>{ %>
 			<article class="book">
 				<img src="<%= product.image %>" class="book_img">
-				<span class="book_name"><%= product.title %></span>
+				
 				<span class="book_price"><%= product.price %>$</span>
 				<a data-product="<%= JSON.stringify(product)%>" class="button-light btn add-to-cart">Add To Cart</a>
 			</article>

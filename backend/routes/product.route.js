@@ -38,6 +38,7 @@ router.post(
   verifyToken,
   checkAdmin,
   upload.single("mybook"),
+  checkInput.checkProduct,
   productController.addProduct
 );
 router.get(
@@ -57,6 +58,7 @@ router.put(
   verifyToken,
   checkAdmin,
   upload.single("mybook"),
+  checkInput.checkProduct,
   productController.editProduct
 );
 
@@ -64,7 +66,6 @@ router.delete(
   "/admin/products/:id",
   verifyToken,
   checkAdmin,
-  productController.deleteImage,
   productController.deleteProduct
 );
 
