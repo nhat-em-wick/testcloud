@@ -4,7 +4,6 @@ const regPass = /^(?=.*[A-z])(?=.*[0-9])([A-z0-9\!\@\#\$\&\*]){8,32}$/;
 const regAddress = /^(?=.*[A-z])(?=.*[0-9])?([A-z0-9\ \.\,\-]){8,}$/gm;
 const regPhone = /^0[1-9]{9}$/;
 const regSearch = /^[A-z0-9 ]*[^!@#$^<>{}&,.; ]$/;
-const regTitle = /^[A-z0-9 ]*$/;
 const regPrice = /^[0-9]*$/;
 
 module.exports.checkLogin = (req, res, next) => {
@@ -158,7 +157,6 @@ module.exports.checkProduct = (req, res, next) => {
     req.flash('error', "All fields are required");
     return res.redirect('back');
   }
-  if(regTitle.test(title)){
     if(regPrice.test(price) && regPrice.test(totalQty)){
       return next();
     }
@@ -169,12 +167,5 @@ module.exports.checkProduct = (req, res, next) => {
     req.flash('error', "Invalid price or Total Quantity");
      return res.redirect('back');
     }
-  }else{
-    req.flash('title', title);
-    req.flash('price', price);
-    req.flash('totalQty', totalQty);
-    req.flash('error', "Invalid Title");
-     return res.redirect('back');
-  }
 
 }
