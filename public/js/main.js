@@ -37,7 +37,7 @@ window.addEventListener("scroll", () => {
 //GET PRODUCTS
 async function getProducts() {
   try {
-    const response = await axios.get('http://localhost:3000/listjson');
+    const response = await axios.get('https://coder-nhat.herokuapp.com/listjson');
     renderProduct(response.data.products)
   } catch (error) {
     console.error(error);
