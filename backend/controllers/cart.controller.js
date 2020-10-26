@@ -26,7 +26,7 @@ module.exports.addToCart = (req, res) => {
 };
 
 module.exports.getItemCart = (req, res) => {
-  res.render("cart/index", { item: req.session.cart });
+  res.render("cart/index");
 };
 
 module.exports.increaseItem = (req, res) => {
