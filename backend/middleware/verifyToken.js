@@ -6,9 +6,7 @@ module.exports = async (req, res, next) => {
      res.redirect('/login');
   }else{
     const token = req.cookies.token.access_token;
-    const {exp} = jwt.decode(token);
-    if (!token || Date.now() >= exp * 1000){
-      delete req.session.user;
+    if (!token){
       res.redirect('/login');
     } else {
       try {
@@ -16,6 +14,7 @@ module.exports = async (req, res, next) => {
         req.user = verified;
         next();
       } catch {
+        delete req.session.user;
         res.redirect('/login');
       }
     }

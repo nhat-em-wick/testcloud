@@ -11,35 +11,35 @@ router.get('/register',redirectHome, userController.pageRegister);
 
 
 router.post(
-  "/login",
+  '/login',
   limitRequest.limiterLogin,
   checkInput.checkLogin,
   userController.login
 );
 
-router.get("/my/", verifyToken, userController.myAccount);
 
-router.post("/register", checkInput.checkRegister, userController.register);
 
-router.get("/my/edit", verifyToken, userController.getChangeInfo);
+router.post('/register', checkInput.checkRegister, userController.register);
 
-router.put(
-  "/my/edit",
+router.get('/my/edit', verifyToken, userController.getChangeInfo);
+
+router.post(
+  '/my/edit',
   verifyToken,
   checkInput.checkChangeInfo,
   userController.changeInfo
 );
 router.get('/forgotpassword', userController.pageForgotPassword);
-router.post("/forgotpassword", userController.forgotPassword);
+router.post('/forgotpassword', userController.forgotPassword);
 router.get('/resetpassword/:id', userController.pageResetPassword);
-router.post("/resetpassword/:id",checkInput.checkNewPass, userController.resetPassword);
+router.post('/resetpassword/:id',checkInput.checkNewPass, userController.resetPassword);
 
-router.post("/refreshtoken", userController.refreshToken);
+// router.post('/refreshtoken', userController.refreshToken);
 
-router.get("/admin/users", verifyToken, checkAdmin, userController.admin_user);
+router.get('/admin/users', verifyToken, checkAdmin, userController.admin_user);
 
 router.post(
-  "/admin/register",
+  '/admin/register',
   verifyToken,
   checkAdmin,
   checkInput.checkRegister,
@@ -47,12 +47,12 @@ router.post(
 );
 
 router.delete(
-  "/admin/deleteuser/:id",
+  '/admin/deleteuser/:id',
   verifyToken,
   checkAdmin,
   userController.deleteUser
 );
-router.get('/admin/users/search', verifyToken,checkAdmin, userController.adminSearch);
+router.get('/admin/users/search', verifyToken,checkAdmin, userController.searchUser);
 router.get('/checkout', userController.checkOut)
 router.get('/logout', userController.logout)
 

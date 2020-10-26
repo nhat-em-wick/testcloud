@@ -26,9 +26,8 @@ module.exports.admin_user = async (req, res) => {
     let perPage = 4;
     const users = await userModel.find({ isAdmin: "false" });
     res.render("admin/admin_user", pagination(page, perPage, users));
-  } catch (err) {
-    console.log(err);
-    res.redirect("/");
+  } catch (e) {
+    res.status(500).send(e);
   }
 };
 
@@ -36,21 +35,12 @@ module.exports.getChangeInfo = async (req, res) => {
   try {
     const user = await userModel.findById(req.user._id);
     return res.render("user/changeinfo", { user: user });
-  } catch (err) {
-    console.log(err);
-    res.redirect("/");
+  } catch (e) {
+    res.status(500).send(e);
   }
 };
 
-module.exports.myAccount = async (req, res) => {
-  try {
-    const user = await userModel.findById(req.user._id);
-    res.status(200).json({ user: user.name });
-  } catch (err) {
-    console.log(err);
-    res.redirect("/");
-  }
-};
+
 
 module.exports.register = async (req, res) => {
   // validation data
@@ -58,7 +48,7 @@ module.exports.register = async (req, res) => {
   // checking if user is already in the database
   const emailExist = await userModel.findOne({ email: req.body.email });
   if (emailExist) {
-    req.flash("error", "email exits");
+    req.flash("error", "Email exits");
     req.flash("name", name);
     req.flash("email", email);
     req.flash("password", password);
@@ -77,9 +67,8 @@ module.exports.register = async (req, res) => {
       });
       const saveUSer = await user.save();
       res.redirect("/login");
-    } catch (err) {
-      console.log(err);
-      res.redirect("/");
+    } catch (e) {
+      res.status(500).send(e);
     }
   }
 };
@@ -94,8 +83,8 @@ module.exports.login = async (req, res) => {
     return res.redirect("/login");
   }
   // password is correct
-  const valiPass = await bcrypt.compare(req.body.password, user.password);
-  if (!valiPass) {
+  const Pass = await bcrypt.compare(req.body.password, user.password);
+  if (!Pass) {
     req.flash("email", email);
     req.flash("error", "Password is wrong!");
     return res.redirect("/login");
@@ -106,7 +95,7 @@ module.exports.login = async (req, res) => {
         { _id: user._id },
         process.env.TOKEN_SECRET,
         {
-          expiresIn: "30m",
+          expiresIn: "45m",
         }
       );
       const refreshToken = await jwt.sign(
@@ -121,8 +110,6 @@ module.exports.login = async (req, res) => {
         refresh_token: refreshToken,
       };
       tokenList[refreshToken] = response;
-      console.log(response);
-
       res.cookie(
         "token",
         { access_token: token, refresh_token: refreshToken },
@@ -136,9 +123,8 @@ module.exports.login = async (req, res) => {
         id: user._id,
       };
       return res.redirect("/");
-    } catch (err) {
-      console.log(err);
-      res.redirect("/");
+    } catch (e) {
+     res.status(500).send(e)
     }
   }
 };
@@ -146,35 +132,26 @@ module.exports.login = async (req, res) => {
 //update user
 module.exports.changeInfo = async (req, res) => {
   const { name, password, conf_password } = req.body;
-  const user = await userModel.findById(req.user._id);
-  if (user) {
     try {
+      const user = await userModel.findById(req.user._id);
       // hash password
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
       user.name = name || user.name;
       user.password = hashedPassword || user.password;
       const updateUser = await user.save();
-      res.redirect("/my/");
-    } catch (err) {
-      console.log(err);
-      req.flash("error", "server error");
-      res.redirect(`/my/edit/${user._id}`);
+      res.redirect("/");
+    } catch (e) {
+      res.status(500).send(e)
     }
-  } else {
-    req.flash("error", "user not found");
-    res.redirect("/my/");
-  }
 };
 
 module.exports.deleteUser = async (req, res) => {
   try {
     await userModel.findByIdAndDelete(req.params.id);
     res.redirect("/admin/users");
-  } catch (err) {
-    req.flash("error", "server error");
-    console.log(err);
-    res.redirect("/admin/users");
+  } catch (e) {
+    res.status(500).send(e)
   }
 };
 
@@ -197,12 +174,13 @@ module.exports.forgotPassword = async (req, res) => {
         expiresIn: "10m",
       }
     );
+    
     const data = {
       from: "admin@admin.mailgun.org",
       to: email,
       subject: "Account Reset Password",
       html: `<h2>Please click on given link to reset password</h2>
-              <p>coder-nhat.herokuapp.com/resetpassword/${token}</p>`,
+            <h5>please click <a href="http://localhost:3000/resetpassword/${token}">link</a> to reset</h5>`
     };
     mg.messages().send(data, function (error, body) {
       console.log(body);
@@ -211,10 +189,8 @@ module.exports.forgotPassword = async (req, res) => {
       let resetLink = await user.updateOne({ resetLink: token });
       req.flash("success", "Email has been sent");
       res.redirect("/forgotpassword");
-    } catch (err) {
-      console.log(err);
-      req.flash("error", "server error");
-      res.redirect("/forgotpassword");
+    } catch (e) {
+      res.status(500).send(e);
     }
   }
 };
@@ -244,9 +220,8 @@ module.exports.resetPassword = async (req, res) => {
         req.flash("success", "Your password has been changed");
         res.redirect("/resetpassword");
       }
-    } catch (err) {
-      req.flash("error", "Token Expired");
-      res.redirect(`/resetpassword/${resetLink}`);
+    } catch (e) {
+      res.status(500).send(e)
     }
   } else {
     req.flash("error", "Invalid token");
@@ -254,60 +229,65 @@ module.exports.resetPassword = async (req, res) => {
   }
 };
 
-module.exports.refreshToken = async (req, res) => {
-  const refreshToken = req.cookies.refresh_token;
-  if (refreshToken && refreshToken in tokenList) {
-    try {
-      const decoded = jwt.decode(refreshToken);
-      const token = jwt.sign({ _id: decoded._id }, process.env.TOKEN_SECRET, {
-        expiresIn: "30m",
-      });
-      // update the token in the list
-      tokenList[refreshToken].access_token = token;
-      const response = {
-        access_token: token,
-        refresh_token: refreshToken,
-      };
-      res.cookie(
-        "token",
-        { access_token: token, refresh_token: refreshToken },
-        {
-          expires: new Date(Date.now() + 8 * 3600000),
-        }
-      );
-      res.redirect("/");
-    } catch (err) {
-      console.log(err);
-    }
-  } else {
-    req.flash("error", "Invalid refresh token");
-  }
-};
+// module.exports.refreshToken = async (req, res) => {
+//   const refreshToken = req.cookies.refresh_token;
+//   if (refreshToken && refreshToken in tokenList) {
+//     try {
+//       const decoded = jwt.decode(refreshToken);
+//       const token = jwt.sign({ _id: decoded._id }, process.env.TOKEN_SECRET, {
+//         expiresIn: "30m",
+//       });
+//       // update the token in the list
+//       tokenList[refreshToken].access_token = token;
+//       const response = {
+//         access_token: token,
+//         refresh_token: refreshToken
+//       };
+//       res.cookie(
+//         "token",
+//         { access_token: token, refresh_token: refreshToken },
+//         {
+//           expires: new Date(Date.now() + 8 * 3600000),
+//         }
+//       );
+//       res.redirect("/");
+//     } catch (e) {
+//      res.status(500).send(e)
+//     }
+//   } else {
+//     req.flash("error", "Invalid refresh token");
+//     res.redirect('/login')
+//   }
+// };
 
 module.exports.checkOut = (req, res) => {
   res.render("user/checkout");
 };
 
-module.exports.adminSearch = async (req, res) => {
+module.exports.searchUser = async (req, res) => {
   let q = req.query.q;
-  let totalUsers = await userModel.find({ isAdmin: false });
-  let matchedUsers = totalUsers.filter((user) => {
-    return user.email.toLowerCase().indexOf(q.toLowerCase()) !== -1; // neu q nam trong title thi gia tri lon hon -1
-  });
-  let page = parseInt(req.query.page) || 1;
-  let perPage = 8; // item in page
-  if (matchedUsers.length < 1) {
-    req.flash("error", `No results for: ${q}`);
-    req.flash("q", q);
-    res.redirect("/admin/users");
-  } else {
-    req.flash("q", q);
-    res.render("admin/admin_user", pagination(page, perPage, matchedUsers));
+  try{
+    let totalUsers = await userModel.find({ isAdmin: false });
+    let matchedUsers = totalUsers.filter((user) => {
+      return user.email.toLowerCase().indexOf(q.toLowerCase()) !== -1; // neu q nam trong title thi gia tri lon hon -1
+    });
+    let page = parseInt(req.query.page) || 1;
+    let perPage = 8; // item in page
+    if (matchedUsers.length < 1) {
+      req.flash("error", `No results for: ${q}`);
+      req.flash("q", q);
+      res.redirect("/admin/users");
+    } else {
+      req.flash("q", q);
+      res.render("admin/admin_user", pagination(page, perPage, matchedUsers));
+    }
+  }catch (e) {
+    res.status(500).send(e);
   }
 };
 
 module.exports.logout = (req, res) => {
   delete req.session.user;
   res.clearCookie("token");
-  res.redirect("/");
+  res.redirect("/login");
 };

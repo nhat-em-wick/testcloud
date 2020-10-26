@@ -167,5 +167,4 @@ module.exports.checkProduct = (req, res, next) => {
     req.flash('error', "Invalid price or Total Quantity");
      return res.redirect('back');
     }
-
 }

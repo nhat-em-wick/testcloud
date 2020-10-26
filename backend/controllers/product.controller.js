@@ -6,25 +6,30 @@ const cloudinary = require("../middleware/clouldinary");
 
 module.exports.searchProduct = async (req, res) => {
   let q = req.query.q;
-  let totalProducts = await productModel.find();
-  let matchedProducts = totalProducts.filter((product) => {
-    return product.title.toLowerCase().indexOf(q.toLowerCase()) !== -1; // neu q nam trong title thi gia tri lon hon -1
-  });
-  let page = parseInt(req.query.page) || 1;
-  let perPage = 8; // item in page
-  if (matchedProducts.length < 1) {
-    req.flash("error", `No results for: ${q}`);
-    req.flash("q", q);
-    res.redirect("/products");
-  } else {
-    req.flash("q", q);
-    res.render("products/index", pagination(page, perPage, matchedProducts));
+  try{
+    let totalProducts = await productModel.find();
+    let matchedProducts = totalProducts.filter((product) => {
+      return product.title.toLowerCase().indexOf(q.toLowerCase()) !== -1; // neu q nam trong title thi gia tri lon hon -1
+    });
+    let page = parseInt(req.query.page) || 1;
+    let perPage = 8; // item in page
+    if (matchedProducts.length < 1) {
+      req.flash("error", `No results for: ${q}`);
+      req.flash("q", q);
+      res.redirect("/products");
+    } else {
+      req.flash("q", q);
+      res.render("products/index", pagination(page, perPage, matchedProducts));
+    }
+  }catch (e) {
+    res.status(500).send(e)
   }
 };
 
 module.exports.adminSearch = async (req, res) => {
   let q = req.query.q;
-  let totalProducts = await productModel.find();
+  try {
+    let totalProducts = await productModel.find();
   let matchedProducts = totalProducts.filter((product) => {
     return product.title.toLowerCase().indexOf(q.toLowerCase()) !== -1; // neu q nam trong title thi gia tri lon hon -1
   });
@@ -41,6 +46,9 @@ module.exports.adminSearch = async (req, res) => {
       pagination(page, perPage, matchedProducts)
     );
   }
+  } catch (e) {
+    res.status(500).send(e)
+  }
 };
 // get list product
 module.exports.listProduct = async (req, res) => {
@@ -50,7 +58,7 @@ module.exports.listProduct = async (req, res) => {
     let perPage = 6; // item in page
     let totalProducts = await productModel.find();
     res.render("products/index", pagination(page, perPage, totalProducts));
-  } catch (err) {
+  } catch (e) {
     console.log(err);
   }
 };
@@ -60,7 +68,7 @@ module.exports.listJson = async (req, res) => {
     let totalProducts = await productModel.find();
     res.json({ products: totalProducts });
   } catch (err) {
-    console.log(err);
+    res.status(500).send(e)
   }
 };
 
@@ -71,9 +79,8 @@ module.exports.admin_product = async (req, res) => {
     let perPage = 4; // item in page
     let totalProducts = await productModel.find();
     res.render("admin/admin_product", pagination(page, perPage, totalProducts));
-  } catch (err) {
-    req.flash("error", err);
-    console.log(err);
+  } catch (e) {
+    res.status(500).send(e)
   }
 };
 
@@ -99,10 +106,9 @@ module.exports.addProduct = async (req, res) => {
       });
       const saveProduct = await product.save();
       res.redirect(`/admin/viewproduct/${saveProduct._id}`);
-    } catch (err) {
-      res.render("404");
+    } catch (e) {
+      res.status(500).send(e)
     }
-  
 };
 
 module.exports.showProduct = async (req, res) => {
@@ -110,8 +116,7 @@ module.exports.showProduct = async (req, res) => {
     const product = await productModel.findById(req.params.id);
     res.render("admin/viewproduct", { product: product });
   } catch (err) {
-    console.log(err);
-    res.redirect('/admin/products')
+    res.status(500).send(e)
   }
 };
 
@@ -119,9 +124,9 @@ module.exports.showEditProduct = async (req, res) => {
   try {
     const product = await productModel.findById(req.params.id);
     res.render("admin/editproduct", { product: product });
-  } catch (err) {
-    console.log(err);
-    res.redirect("/admin/products")
+  } catch (e) {
+    res.status(500).send(e)
+
   }
 };
 
@@ -133,20 +138,15 @@ module.exports.editProduct = async (req, res) => {
     const {path} = file;
     const newpath = await uploader(path);
     fs.unlinkSync(path)
-    
       const product = await productModel.findById(req.params.id);
-      if (product) {
         product.title = title || product.title;
         product.price = price || product.price;
         product.totalQty = totalQty || product.totalQty;
         product.image = req.body.mybook || product.image;
         const updateProduct = await product.save();
         res.redirect(`/admin/viewproduct/${updateProduct._id}`);
-      } else {
-        res.render("404");
-      }
-    } catch (err) {
-      res.render("404");
+    } catch (e) {
+      res.status(500).send(e)
     }
 };
 
@@ -164,7 +164,8 @@ module.exports.deleteProduct = async function (req, res) {
   try {
     await productModel.findByIdAndDelete(req.params.id);
     res.redirect("/admin/products");
-  } catch (err) {
-    console.log(err);
+  } catch (e) {
+    res.status(500).send(e)
+
   }
 };

@@ -6,20 +6,25 @@ const pagination = require("./pagination");
 
 module.exports.adminSearch = async (req, res) => {
   let q = req.query.q;
-  const orders = await orderModel.find().populate("customerId", "-password");
-  let matchedOrders = orders.filter((order) => {
-    return order.customerId.name.toLowerCase().indexOf(q.toLowerCase()) !== -1; // neu q nam trong title thi gia tri lon hon -1
-  });
-  let page = parseInt(req.query.page) || 1;
-  let perPage = 4; // item in page
-  if (matchedOrders.length < 1) {
-    req.flash("error", `No results for: ${q}`);
-    req.flash("q", q);
-    res.redirect("/admin/orders");
-  } else {
-    req.flash("q", q);
-    res.render("admin/admin_order", pagination(page, perPage, matchedOrders));
+  try{
+    const orders = await orderModel.find().populate("customerId", "-password");
+    let matchedOrders = orders.filter((order) => {
+      return order.customerId.name.toLowerCase().indexOf(q.toLowerCase()) !== -1; // neu q nam trong title thi gia tri lon hon -1
+    });
+    let page = parseInt(req.query.page) || 1;
+    let perPage = 4; // item in page
+    if (matchedOrders.length < 1) {
+      req.flash("error", `No results for: ${q}`);
+      req.flash("q", q);
+      res.redirect("/admin/orders");
+    } else {
+      req.flash("q", q);
+      res.render("admin/admin_order", pagination(page, perPage, matchedOrders));
+    }
+  }catch (e) {
+    res.status(500).send(e);
   }
+  
 };
 
 module.exports.order = async (req, res) => {
@@ -43,9 +48,8 @@ module.exports.order = async (req, res) => {
     delete req.session.cart;
     req.flash('success', "Order placed successfully");
     res.redirect("/orders");
-  } catch (err) {
-    res.flash('error', "server error");
-    res.redirect("/orders");
+  } catch (e) {
+   res.status(500).send(e);
   }
 };
 
@@ -53,11 +57,9 @@ module.exports.showOrderUser = async (req, res) => {
   try {
     const id = mongoose.Types.ObjectId(req.user._id);
     const orders = await orderModel.find({ customerId: id });
-    if (orders) return res.render("orders/index", { orders: orders });
-    req.flash("error", "orders not found");
-    return res.redirect("/orders");
+    return res.render("orders/index", { orders: orders });
   } catch (err) {
-    console.log(err);
+    res.status(500).send(e);
   }
 };
 
@@ -65,9 +67,9 @@ module.exports.statusOrder = async (req, res) => {
   try {
     const order = await orderModel.findById(req.params.id);
     res.render("orders/singleorder", { order: order });
-  } catch (err) {
-    console.log(err);
-    res.redirect("/orders");
+  } catch (e) {
+    res.status(500).send(e);
+
   }
 };
 
@@ -76,13 +78,9 @@ module.exports.admin_order = async (req, res) => {
     let page = parseInt(req.query.page) || 1;
     let perPage = 4; // item in page
     const orders = await orderModel.find().populate("customerId", "-password");
-    if (orders)
-      return res.render("admin/admin_order", pagination(page, perPage, orders));
-    req.flash("error", "orders not found");
-    return res.redirect("/admin/orders");
-  } catch (err) {
-    req.flash("error", "server error");
-    return res.redirect("/admin/orders");
+    res.render("admin/admin_order", pagination(page, perPage, orders));
+  } catch (e) {
+    res.status(500).send(e);
   }
 };
 
@@ -96,9 +94,8 @@ module.exports.cancelOrder = async (req, res) => {
     }
     await orderModel.findByIdAndDelete(req.params.id);
     res.redirect("/orders");
-  } catch (err) {
-    req.flash("error", "server error");
-    res.redirect("/orders");
+  } catch (e) {
+    res.status(500).send(e);
   }
 };
 
@@ -114,9 +111,8 @@ module.exports.updateStatus = async (req, res) => {
       status: req.body.status,
     });
     res.redirect("/admin/orders");
-  } catch (err) {
-    console.log(err);
-    res.redirect("/admin/orders");
+  } catch (e) {
+    res.status(500).send(e);
   }
 };
 
@@ -130,8 +126,7 @@ module.exports.deleteOrder = async (req, res) => {
     }
     await orderModel.findByIdAndDelete(req.params.id);
     res.redirect("/admin/orders");
-  } catch (err) {
-    req.flash("error", "server error");
-    res.redirect("/admin/orders");
+  } catch (e) {
+    res.status(500).send(e);
   }
 };
